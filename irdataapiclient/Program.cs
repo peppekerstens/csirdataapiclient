@@ -153,7 +153,7 @@ public class IrDataClient
         if (resourceObj.ContainsKey("link"))
         {
             HttpResponseMessage response = await client.GetAsync(resourceObj["link"].ToString());
-
+            
             if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
                 authenticated = false;
@@ -189,13 +189,18 @@ public class IrDataClient
 
     public async Task<List<Dictionary<string, object>>> GetCarsAsync()
     {
-        return await GetResourceAsync("/data/car/get") as List<Dictionary<string, object>>;
+        var resourceObj = await GetResourceAsync("/data/car/get");
+        // Expliciet deserialiseren naar een lijst van dictionaries
+        return JsonSerializer.Deserialize<List<Dictionary<string, object>>>(resourceObj.ToString());
     }
 
     public async Task<List<Dictionary<string, object>>> GetTracksAsync()
     {
-        return await GetResourceAsync("/data/track/get") as List<Dictionary<string, object>>;
+        var resourceObj = await GetResourceAsync("/data/track/get");
+        // Expliciet deserialiseren naar een lijst van dictionaries
+        return JsonSerializer.Deserialize<List<Dictionary<string, object>>>(resourceObj.ToString());
     }
+
 
     // Similarly, you can implement other methods
 }
