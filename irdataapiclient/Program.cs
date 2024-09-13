@@ -19,7 +19,7 @@ public class IrDataClient
     private HttpClient client;
     private string baseUrl;
     private string username;
-    private string encodedPassword;
+    private string encodedPassword; //hallo
 
     public IrDataClient(string username, string password)
     {
