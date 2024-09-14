@@ -13,7 +13,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-public class IrDataClient
+public class IrDataClient2
 {
     private bool authenticated;
     private HttpClient client;
@@ -153,7 +153,7 @@ public class IrDataClient
         if (resourceObj.ContainsKey("link"))
         {
             HttpResponseMessage response = await client.GetAsync(resourceObj["link"].ToString());
-            
+
             if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
                 authenticated = false;
@@ -189,20 +189,13 @@ public class IrDataClient
 
     public async Task<List<Dictionary<string, object>>> GetCarsAsync()
     {
-        var resourceObj = await GetResourceAsync("/data/car/get");
-        // Expliciet deserialiseren naar een lijst van dictionaries
-        return JsonSerializer.Deserialize<List<Dictionary<string, object>>>(resourceObj.ToString());
+        return await GetResourceAsync("/data/car/get") as List<Dictionary<string, object>>;
     }
 
     public async Task<List<Dictionary<string, object>>> GetTracksAsync()
     {
-        var resourceObj = await GetResourceAsync("/data/track/get");
-        // Expliciet deserialiseren naar een lijst van dictionaries
-        return JsonSerializer.Deserialize<List<Dictionary<string, object>>>(resourceObj.ToString());
+        return await GetResourceAsync("/data/track/get") as List<Dictionary<string, object>>;
     }
-
 
     // Similarly, you can implement other methods
 }
-
-
