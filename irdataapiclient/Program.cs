@@ -19,7 +19,7 @@ public class IrDataClient
     private HttpClient client;
     private string baseUrl;
     private string username;
-    private string encodedPassword;
+    private string encodedPassword; //hallo
 
     public IrDataClient(string username, string password)
     {
@@ -39,7 +39,7 @@ public class IrDataClient
         }
     }
 
-    private async Task<string> LoginAsync()
+    public async Task<string> LoginAsync()
     {
         var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
         var data = new { email = username, password = encodedPassword };
@@ -153,7 +153,7 @@ public class IrDataClient
         if (resourceObj.ContainsKey("link"))
         {
             HttpResponseMessage response = await client.GetAsync(resourceObj["link"].ToString());
-            
+
             if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
                 authenticated = false;
@@ -204,5 +204,3 @@ public class IrDataClient
 
     // Similarly, you can implement other methods
 }
-
-
