@@ -180,7 +180,7 @@ public class IrDataClient
             {
                 throw new Exception($"Unhandled Non-200 response: {response.StatusCode}");
             }
-
+            Console.WriteLine(resourceObj);
             return JsonSerializer.Deserialize<Dictionary<string, object>>(await response.Content.ReadAsStringAsync());
         }
 
@@ -190,10 +190,24 @@ public class IrDataClient
     public async Task<List<Dictionary<string, object>>> GetCarsAsync()
     {
         var resourceObj = await GetResourceAsync("/data/car/get");
-        Dictionary<string, object> test = await GetResourceAsync("/data/car/get");
-        // Expliciet deserialiseren naar een lijst van dictionaries
-        return JsonSerializer.Deserialize<List<Dictionary<string, object>>>(resourceObj.ToString());
+
+        // Controleer of de ontvangen data correct is
+        if (resourceObj != null)
+        {
+            // Probeer te deserialiseren naar een lijst van dictionaries
+            var jsonString = resourceObj.ToString(); // Haal de JSON-string op
+
+            // Check of het daadwerkelijk een lijst is
+            if (jsonString.StartsWith("["))
+            {
+                // Deserialiseer naar een lijst van dictionaries
+                return JsonSerializer.Deserialize<List<Dictionary<string, object>>>(jsonString);
+            }
+        }
+
+        throw new Exception("Invalid data format, expected a list of cars.");
     }
+
 
     public async Task<List<Dictionary<string, object>>> GetTracksAsync()
     {

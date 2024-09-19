@@ -7,6 +7,9 @@
         string password = "F3rR@rI2@24!!";
 
         IrDataClient irClient = new IrDataClient(username, password);
+
+        await LoginTest(irClient);
+        await GetCarsTest(irClient);
     }
 
     public static async Task LoginTest(IrDataClient irClient)
@@ -22,5 +25,12 @@
         {
             Console.WriteLine("Login failed.");
         }
+    }
+
+    public static async Task GetCarsTest(IrDataClient irClient)
+    {
+        Console.WriteLine("Requesting cars...");
+        List<Dictionary<string, object>> test = await irClient.GetCarsAsync();
+        Console.WriteLine("Received cars.");
     }
 }
