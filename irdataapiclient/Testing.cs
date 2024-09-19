@@ -7,7 +7,10 @@
         string password = "F3rR@rI2@24!!";
 
         IrDataClient irClient = new IrDataClient(username, password);
+    }
 
+    public static async Task LoginTest(IrDataClient irClient)
+    {
         // Call LoginAsync and check if login is successful
         string loginResult = await irClient.LoginAsync();
 

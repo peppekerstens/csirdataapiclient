@@ -190,6 +190,7 @@ public class IrDataClient
     public async Task<List<Dictionary<string, object>>> GetCarsAsync()
     {
         var resourceObj = await GetResourceAsync("/data/car/get");
+        Dictionary<string, object> test = await GetResourceAsync("/data/car/get");
         // Expliciet deserialiseren naar een lijst van dictionaries
         return JsonSerializer.Deserialize<List<Dictionary<string, object>>>(resourceObj.ToString());
     }
