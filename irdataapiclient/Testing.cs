@@ -32,5 +32,13 @@
         Console.WriteLine("Requesting cars...");
         List<Dictionary<string, object>> test = await irClient.GetCarsAsync();
         Console.WriteLine("Received cars.");
+
+        foreach (Dictionary<string, object> testEntry in test)
+        {
+            foreach (string key in testEntry.Keys)
+            {
+                Console.WriteLine($"{key} {testEntry[key]}");
+            }
+        }
     }
 }

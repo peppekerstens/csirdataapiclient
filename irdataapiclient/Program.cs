@@ -5,13 +5,17 @@
 //JSON serialization and deserialization is handled by System.Text.Json.
 //The Python requests.Session() behavior is mapped to HttpClient, which persists across multiple requests.
 //
+using Moq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class IrDataClient
 {
@@ -148,7 +152,7 @@ public class IrDataClient
     public async Task<Dictionary<string, object>> GetResourceAsync(string endpoint, Dictionary<string, string> payload = null)
     {
         string requestUrl = BuildUrl(endpoint);
-        var resourceObj = await GetResourceOrLinkAsync(requestUrl, payload);
+        Dictionary<string, object> resourceObj = await GetResourceOrLinkAsync(requestUrl, payload);
 
         if (resourceObj.ContainsKey("link"))
         {
@@ -170,7 +174,9 @@ public class IrDataClient
                         DateTime resetDatetime = DateTimeOffset.FromUnixTimeSeconds(resetTimestamp).DateTime;
                         TimeSpan delta = resetDatetime - DateTime.Now;
                         if (delta.TotalSeconds > 0)
+                        {
                             await Task.Delay(delta);
+                        }
                     }
                 }
                 return await GetResourceAsync(endpoint, payload);
@@ -180,8 +186,7 @@ public class IrDataClient
             {
                 throw new Exception($"Unhandled Non-200 response: {response.StatusCode}");
             }
-            Console.WriteLine(resourceObj);
-            return JsonSerializer.Deserialize<Dictionary<string, object>>(await response.Content.ReadAsStringAsync());
+            return resourceObj;
         }
 
         return resourceObj;
@@ -192,20 +197,37 @@ public class IrDataClient
         var resourceObj = await GetResourceAsync("/data/car/get");
 
         // Controleer of de ontvangen data correct is
-        if (resourceObj != null)
+        if (resourceObj == null)
         {
-            // Probeer te deserialiseren naar een lijst van dictionaries
-            var jsonString = resourceObj.ToString(); // Haal de JSON-string op
+            throw new Exception("Invalid data format, expected a list of cars.");
+        }
 
-            // Check of het daadwerkelijk een lijst is
-            if (jsonString.StartsWith("["))
+        List<Dictionary<string, object>> listWithDic = new List<Dictionary<string, object>>();
+        listWithDic.Add(resourceObj);
+
+        if (listWithDic.Count > 1)
+        {
+            // More than 1 key in the list = chaos
+        }
+        else if (listWithDic.Count == 0)
+        {
+            // List is empty
+        }
+        else
+        {
+            foreach (Dictionary<string, object> kvp in listWithDic)
             {
-                // Deserialiseer naar een lijst van dictionaries
-                return JsonSerializer.Deserialize<List<Dictionary<string, object>>>(jsonString);
+                await getJson(kvp["link"].ToString(), "carlist");
             }
         }
 
-        throw new Exception("Invalid data format, expected a list of cars.");
+        string testURL = @"data\\carlist.json";
+        string jsonString = File.ReadAllText(testURL);
+        List<string> jsonData = JsonSerializer.Deserialize<List<string>>(jsonString);
+
+        Console.WriteLine(jsonString); //string jsonString = JsonSerializer.Serialize(yourObject);
+
+        return listWithDic;
     }
 
 
@@ -217,5 +239,28 @@ public class IrDataClient
     }
 
 
-    // Similarly, you can implement other methods
+    public async Task getJson(string url, string filename)
+    {
+        // File path to save the downloaded file
+        string filePath = @$"data\{filename}.json";
+
+        // Create HttpClient
+        using (HttpClient client = new HttpClient())
+        {
+            try
+            {
+                // Download file as a byte array
+                byte[] fileBytes = await client.GetByteArrayAsync(url);
+
+                // Save the file locally
+                await File.WriteAllBytesAsync(filePath, fileBytes);
+
+                Console.WriteLine("File downloaded and saved successfully.");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"An error occurred: {e.Message}");
+            }
+        }
+    }
 }
