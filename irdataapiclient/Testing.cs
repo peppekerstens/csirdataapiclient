@@ -3,8 +3,8 @@
     public static async Task Main(string[] args)
     {
         // Instantiate the IrDataClient with username and password
-        string username = "tt9325951@gmail.com";
-        string password = "F3rR@rI2@24!!";
+        string username = "username";
+        string password = "password";
 
         IrDataClient irClient = new IrDataClient(username, password);
 
