@@ -3,9 +3,11 @@
     public static async Task Main(string[] args)
     {
         // Instantiate the IrDataClient with username and password
-        string username = "username";
-        string password = "password";
-
+        Console.WriteLine("Provide iRacing username");
+        string username = Console.ReadLine();
+        Console.WriteLine("Provide iRacing password");
+        string password = Console.ReadLine();   
+        
         IrDataClient irClient = new IrDataClient(username, password);
 
         await LoginTest(irClient);
