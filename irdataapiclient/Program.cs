@@ -263,4 +263,24 @@ public class IrDataClient
             }
         }
     }
+
+    public async Task<Dictionary<string, object>> GetUserIRatingAsync(string custId)
+    {
+        // Construct the endpoint for retrieving user iRating based on custId
+        var endpoint = $"/data/stats/member/{custId}/career";
+
+        // Get the resource from the endpoint
+        var resourceObj = await GetResourceAsync(endpoint);
+
+        // Check if the returned data is in the correct format
+        if (resourceObj == null || !resourceObj.ContainsKey("iRating"))
+        {
+            throw new Exception("Invalid data format, expected iRating information.");
+        }
+
+        // Log the iRating value
+        Console.WriteLine($"User iRating: {resourceObj["iRating"]}");
+
+        return resourceObj;
+    }
 }

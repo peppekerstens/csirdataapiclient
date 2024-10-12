@@ -11,7 +11,8 @@
         IrDataClient irClient = new IrDataClient(username, password);
 
         await LoginTest(irClient);
-        await GetCarsTest(irClient);
+        //await GetCarsTest(irClient);
+        await getIratingTest(irClient);
     }
 
     public static async Task LoginTest(IrDataClient irClient)
@@ -42,5 +43,20 @@
                 Console.WriteLine($"{key} {testEntry[key]}");
             }
         }
+    }
+
+    public static async Task getIratingTest(IrDataClient irClient)
+    {
+        try
+        {
+            var iRatingInfo = await irClient.GetUserIRatingAsync("929520");
+            Console.WriteLine($"The user's iRating is: {iRatingInfo["iRating"]}");
+        }
+        
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error retrieving iRating: {ex.Message}");
+        }
+         Console.WriteLine("blub");
     }
 }
