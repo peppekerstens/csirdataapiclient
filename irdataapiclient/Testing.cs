@@ -14,7 +14,7 @@ public class LoginTests
 
         await LoginTest(irClient);
         //await GetCarsTest(irClient);
-        await getAllCommands(irClient);
+        await getIratingTest(irClient);
     }
 
     public static async Task LoginTest(IrDataClient irClient)
@@ -59,7 +59,6 @@ public class LoginTests
         {
             Console.WriteLine($"Error retrieving iRating: {ex.Message}");
         }
-         Console.WriteLine("blub");
     }
 
     public static async Task getAllCommands(IrDataClient irClient)

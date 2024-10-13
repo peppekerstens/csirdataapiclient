@@ -243,20 +243,17 @@ public class IrDataClient
     {
         // File path to save the downloaded file
         string filePath = @$"data\{filename}.json";
-        Console.WriteLine("blub2");
 
         // Create HttpClient
         using (HttpClient client = new HttpClient())
         {
             try
             {
-                Console.WriteLine("blub3");
                 // Download file as a byte array
                 byte[] fileBytes = await client.GetByteArrayAsync(url);
 
                 // Save the file locally
                 await File.WriteAllBytesAsync(filePath, fileBytes);
-                Console.WriteLine("blub4");
 
                 Console.WriteLine("File downloaded and saved successfully.");
             }
@@ -273,8 +270,8 @@ public class IrDataClient
         //var endpoint = $"/data/track/get";
         //var endpoint = $"/data/doc";
         //var endpoint = $"/data/stats/member/{custId}/career";
-        var endpoint = $"/data/driver_stats_by_category/sports_car";
-        //var endpoint = $"/data/member/chart_data/929520/2/1";
+        //var endpoint = $"/data/driver_stats_by_category/sports_car";
+        var endpoint = $"/data/member/chart_data/929520/2/1";
         Console.WriteLine(endpoint);
 
         // Get the resource from the endpoint
@@ -283,14 +280,14 @@ public class IrDataClient
         // Check if the returned data is in the correct format
         if (resourceObj == null || !resourceObj.ContainsKey("iRating"))
         {
-            Console.WriteLine(resourceObj);
-            foreach (KeyValuePair<string, object> ele2 in resourceObj)
-            {
-                Console.WriteLine("{0} and {1}", ele2.Key, ele2.Value);
-            }
-            getJson(BuildUrl(endpoint), "generalinfo");
             throw new Exception("Invalid data format, expected iRating information.");
         }
+
+        foreach (KeyValuePair<string, object> ele2 in resourceObj)
+        {
+            Console.WriteLine("{0} and {1}", ele2.Key, ele2.Value);
+        }
+        await getJson(BuildUrl(endpoint), "generalinfo");
 
         // Log the iRating value
         Console.WriteLine($"User iRating: {resourceObj["iRating"]}");
