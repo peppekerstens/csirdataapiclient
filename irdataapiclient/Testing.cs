@@ -1,4 +1,6 @@
-﻿public class LoginTests
+﻿using System.Runtime.CompilerServices;
+
+public class LoginTests
 {
     public static async Task Main(string[] args)
     {
@@ -12,7 +14,7 @@
 
         await LoginTest(irClient);
         //await GetCarsTest(irClient);
-        await getIratingTest(irClient);
+        await getAllCommands(irClient);
     }
 
     public static async Task LoginTest(IrDataClient irClient)
@@ -58,5 +60,15 @@
             Console.WriteLine($"Error retrieving iRating: {ex.Message}");
         }
          Console.WriteLine("blub");
+    }
+
+    public static async Task getAllCommands(IrDataClient irClient)
+    { 
+        Dictionary<string, object> commands = await irClient.GetAllCommands();
+
+        foreach (KeyValuePair<string, object> ele2 in commands)
+        {
+            Console.WriteLine("{0} and {1}", ele2.Key, ele2.Value);
+        }
     }
 }
